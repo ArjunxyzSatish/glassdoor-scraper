@@ -6,17 +6,6 @@ Created on Tue Jun 27 12:02:53 2023
 @author: Arjun Satish
 """
 
-# JobTitle
-# Salary
-# Job Description
-# Rating
-# Company Name
-# Location
-# Size
-# Founded
-# Industry
-# Competitors
-
 from selenium import webdriver 
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
@@ -25,6 +14,8 @@ import time
 import sys
 
 jobs = []
+
+#https://www.glassdoor.com/Job/india-data-science-jobs-SRCH_IL.0,5_IN115_KO6,18.htm?includeNoSalaryJobs=true&pgc=AB4AAIEAAAAAAAAAAAAAAAAAAgiawJwAAwAAAQAA
 
 def scrapeJobs(term, location, numJobs):
     driver = webdriver.Firefox()
@@ -43,7 +34,7 @@ def scrapeJobs(term, location, numJobs):
     last_space_index = pageFooter.rfind(' ')
     
     pageMax = int(pageFooter[last_space_index + 1:])
-    
+    print(pageMax)
     
     flag = 0
     
@@ -52,12 +43,14 @@ def scrapeJobs(term, location, numJobs):
             break
         
         jobListings = driver.find_elements(By.XPATH, '//ul[@class="hover p-0 my-0  css-7ry9k1 exy0tjh5"]/li')
-        
+       
         for i in range(0, len(jobListings)):
             if(len(jobs) == numJobs):
                 print('Got what we need.')
-                sys.exit()
-            
+                break
+                #sys.exit()
+                
+          
             try:
                 jobListings[i].click()
                 time.sleep(2)
@@ -129,18 +122,19 @@ def scrapeJobs(term, location, numJobs):
                          "Location": location,
                          "Founded": founded,
                          "Industry": industry,
-                         "Sectory": sector,
+                         "Sector": sector,
                          "Revenue": revenue,
                          "Size": size,
                          "Type of Ownership": ownership})
              
+                print('Success - ' + str(len(jobs)) + ': ' + title)
                 
             except:
                 close = driver.find_element(By.XPATH, '//button[@class="e1jbctw80 ei0fd8p1 css-1n14mz9 e1q8sty40"]')
                 close.click()
                 
         try:
-            driver.find_element(By.XPATH, '//button[@class="nextButton job-search-1iiwzeb e13qs2072"]').click()
+            driver.find_element(By.XPATH, '//button[@class="nextButton job-search-opoz2d e13qs2072"]').click()
             time.sleep(2)
             print("Thats all in this page. Checking the next page...")
             page += 1
@@ -148,12 +142,14 @@ def scrapeJobs(term, location, numJobs):
                 flag = 1
                 print("No more jobs on site")
                 sys.exit()
+                #driver.quit()
         except:
             print("No more jobs")
+            #driver.quit()
             break
         
     return(pd.DataFrame(jobs))
-
+    print(jobs)
 
 
 

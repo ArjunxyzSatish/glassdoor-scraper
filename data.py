@@ -3,8 +3,10 @@
 
 
 import GlassdoorScraper as gs
-import pandas as pd
 
-jobsDF = gs.scrapeJobs('Data Science', 'India', 333333)
+jobsDF = gs.scrapeJobs('Data Science', 'India', 4)
+
+print('data received')
+print(jobsDF)
 
 jobsDF.to_csv('test.csv', index=False)
